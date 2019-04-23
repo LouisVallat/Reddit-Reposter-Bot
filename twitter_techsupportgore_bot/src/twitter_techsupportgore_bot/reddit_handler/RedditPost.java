@@ -135,7 +135,7 @@ public abstract class RedditPost {
      * Update post's score.
      * @param newScore the new score.
      */
-    public void updateScore(int newScore) {
+    public void updateScore(double newScore) {
         this.score = newScore;
     }
 
