@@ -75,15 +75,16 @@ public abstract class RedditPost {
 
     /**
      * Main constructor for a Reddit post.
+     * @param id post's id
      * @param title post's title
      * @param quarantine is this post in quarantine?
      * @param score post's score
-     * @param postHint 
-     * @param crosspostable
-     * @param over18
-     * @param author
-     * @param permalink
-     * @param spoiler 
+     * @param postHint post's hint
+     * @param crosspostable is post crosspostable?
+     * @param over18 is post NSFW?
+     * @param author post's author
+     * @param permalink post's permalink
+     * @param spoiler is this post a spoiler?
      */
     public RedditPost(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
         this.postId = id;
@@ -98,42 +99,98 @@ public abstract class RedditPost {
         this.spoiler = spoiler;
     }
 
+    /**
+     * Get post's title.
+     * @return post's title.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Is this post in quarantine?
+     * @return if the post is in quarantine.
+     */
     public boolean isQuarantine() {
         return quarantine;
     }
+    
+    /**
+     * Set quarantine state for the post.
+     * @param state the state to apply.
+     */
+    public void setQuarantineState(boolean state) {
+        this.quarantine = state;
+    } 
 
+    /**
+     * Get post's score.
+     * @return last known post's score.
+     */
     public double getScore() {
         return score;
     }
+    
+    /**
+     * Update post's score.
+     * @param newScore the new score.
+     */
+    public void updateScore(int newScore) {
+        this.score = newScore;
+    }
 
+    /**
+     * Get post's hint.
+     * @return post's hint.
+     */
     public String getPostHint() {
         return postHint;
     }
 
+    /**
+     * Is this post crosspostable?
+     * @return if the post is crosspostable.
+     */
     public boolean isCrosspostable() {
         return crosspostable;
     }
 
+    /**
+     * Is this post NSFW?
+     * @return if the post is Not Safe For Work.
+     */
     public boolean isOver18() {
         return over18;
     }
 
+    /**
+     * Get post's author.
+     * @return post's author.
+     */
     public String getAuthor() {
         return author;
     }
-
+    
+    /**
+     * Get post's permalink.
+     * @return the post's permalink.
+     */
     public String getPermalink() {
         return permalink;
     }
 
+    /**
+     * Is this post a spoiler?
+     * @return if the post is a spoiler.
+     */
     public boolean isSpoiler() {
         return spoiler;
     }
 
+    /**
+     * Get post's id.
+     * @return post's id.
+     */
     public String getPostId() {
         return postId;
     }
