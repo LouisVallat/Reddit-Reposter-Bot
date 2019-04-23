@@ -22,8 +22,30 @@ package twitter_techsupportgore_bot.reddit_handler;
  */
 public class RedditPostLink extends RedditPost {
 
-    public RedditPostLink(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
+    public RedditPostLink(String id, String title, boolean quarantine, 
+            double score, String postHint, boolean crosspostable, 
+            boolean over18, String author, String permalink, boolean spoiler) {
         super(id, title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler);
+    }
+
+    @Override
+    public boolean isImage() {
+        return false;
+    }
+
+    @Override
+    public boolean isText() {
+        return false;
+    }
+
+    @Override
+    public boolean isVideo() {
+        return false;
+    }
+
+    @Override
+    public boolean isLink() {
+        return true;
     }
     
 }

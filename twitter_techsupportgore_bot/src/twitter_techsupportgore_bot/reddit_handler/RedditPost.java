@@ -194,4 +194,29 @@ public abstract class RedditPost {
     public String getPostId() {
         return postId;
     }
+    
+    /**
+     * Is this post an image?
+     * @return if the post is an image.
+     */
+    public abstract boolean isImage();
+    
+    /**
+     * Is this post a text?
+     * @return if the post is a text.
+     */
+    public abstract boolean isText();
+    
+    /**
+     * Is this post a video?
+     * @return if the post is a video.
+     */
+    public abstract boolean isVideo();
+    
+    
+    /**
+     * Is this post a link?
+     * @return if the post is a link.
+     */
+    public abstract boolean isLink();
 }
