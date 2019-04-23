@@ -22,4 +22,8 @@ package twitter_techsupportgore_bot.reddit_handler;
  */
 public class RedditPostVideo extends RedditPost{
     
+    public RedditPostVideo(String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
+        super(title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler);
+    }
+    
 }

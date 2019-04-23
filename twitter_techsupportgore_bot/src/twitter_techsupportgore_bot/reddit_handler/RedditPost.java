@@ -24,6 +24,11 @@ package twitter_techsupportgore_bot.reddit_handler;
 public abstract class RedditPost {
 
     /**
+     * Post's id.
+     */
+    protected String postId;
+    
+    /**
      * Post's title.
      */
     protected String title;
@@ -68,6 +73,18 @@ public abstract class RedditPost {
      */
     protected boolean spoiler;
 
+    /**
+     * Main constructor for a Reddit post.
+     * @param title post's title
+     * @param quarantine is this post in quarantine?
+     * @param score
+     * @param postHint
+     * @param crosspostable
+     * @param over18
+     * @param author
+     * @param permalink
+     * @param spoiler 
+     */
     public RedditPost(String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
         this.title = title;
         this.quarantine = quarantine;
@@ -115,7 +132,8 @@ public abstract class RedditPost {
     public boolean isSpoiler() {
         return spoiler;
     }
-    
-    
-    
+
+    public String getPostId() {
+        return postId;
+    }
 }
