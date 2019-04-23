@@ -26,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import twitter_techsupportgore_bot.reddit_handler.RedditPost;
+import twitter_techsupportgore_bot.reddit_handler.RedditPostLink;
 
 /**
  * This is where everything begins.
@@ -40,12 +42,15 @@ public class Twitter_techsupportgore_bot {
      * Launch the bot.
      *
      * @param args the command line arguments
+     * @throws java.net.MalformedURLException
+     * @throws java.net.ProtocolException
      */
     public static void main(String[] args) throws MalformedURLException,
             ProtocolException, IOException {
 
         String url = "https://www.reddit.com/r/techsupportgore/new.json?limit=75";
 
+        /*
         try {
 
             URL myurl = new URL(url);
@@ -95,5 +100,7 @@ public class Twitter_techsupportgore_bot {
 
             con.disconnect();
         }
+        
+        */
     }
 }
