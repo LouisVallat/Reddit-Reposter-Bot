@@ -77,15 +77,16 @@ public abstract class RedditPost {
      * Main constructor for a Reddit post.
      * @param title post's title
      * @param quarantine is this post in quarantine?
-     * @param score
-     * @param postHint
+     * @param score post's score
+     * @param postHint 
      * @param crosspostable
      * @param over18
      * @param author
      * @param permalink
      * @param spoiler 
      */
-    public RedditPost(String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
+    public RedditPost(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
+        this.postId = id;
         this.title = title;
         this.quarantine = quarantine;
         this.score = score;
