@@ -120,7 +120,7 @@ public abstract class RedditPost {
      * @return if the URL is correct.
      */
     public boolean hasMediaUrl() {
-        return !"".equals(url);
+        return url.contains(".jpg") || url.contains(".png");
     }
     
     /**

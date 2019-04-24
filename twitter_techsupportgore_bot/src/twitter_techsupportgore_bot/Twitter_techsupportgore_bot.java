@@ -16,18 +16,9 @@
  */
 package twitter_techsupportgore_bot;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import twitter_techsupportgore_bot.reddit_handler.*;
 
@@ -38,7 +29,15 @@ import twitter_techsupportgore_bot.reddit_handler.*;
  */
 public class Twitter_techsupportgore_bot {
 
-    private static HttpURLConnection con;
+    /**
+     * Delay between two scans, in seconds.
+     */
+    private static final int DELAY = 5;
+
+    /**
+     * Subreddit to extract info from.
+     */
+    private static final String SUBREDDIT = "techsupportgore";
 
     /**
      * Launch the bot.
@@ -51,9 +50,9 @@ public class Twitter_techsupportgore_bot {
             ProtocolException, IOException {
 
         TreeSet<RedditPost> postsIndexed = new TreeSet<>();
-        RedditExtractor red = new RedditExtractor("techsupportgore");
+        RedditExtractor red = new RedditExtractor(SUBREDDIT);
         for (RedditPost r : red.getRedditPosts()) {
-            System.out.println(r.getTitle());
+            Hypervisor.saveImage(r.getUrl());
         }
     }
 }
