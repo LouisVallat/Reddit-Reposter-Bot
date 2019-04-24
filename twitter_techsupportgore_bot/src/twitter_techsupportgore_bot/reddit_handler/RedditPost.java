@@ -27,7 +27,7 @@ public abstract class RedditPost {
      * Post's id.
      */
     protected String postId;
-    
+
     /**
      * Post's title.
      */
@@ -74,7 +74,13 @@ public abstract class RedditPost {
     protected boolean spoiler;
 
     /**
+     * Post's media url.
+     */
+    protected String url;
+
+    /**
      * Main constructor for a Reddit post.
+     *
      * @param id post's id
      * @param title post's title
      * @param quarantine is this post in quarantine?
@@ -85,8 +91,9 @@ public abstract class RedditPost {
      * @param author post's author
      * @param permalink post's permalink
      * @param spoiler is this post a spoiler?
+     * @param url post's media url
      */
-    public RedditPost(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler) {
+    public RedditPost(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler, String url) {
         this.postId = id;
         this.title = title;
         this.quarantine = quarantine;
@@ -97,10 +104,28 @@ public abstract class RedditPost {
         this.author = author;
         this.permalink = permalink;
         this.spoiler = spoiler;
+        this.url = url;
     }
 
     /**
+     * Get post's URL.
+     * @return the post's media URL.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Check if the Media URL is correct.
+     * @return if the URL is correct.
+     */
+    public boolean hasMediaUrl() {
+        return !"".equals(url);
+    }
+    
+    /**
      * Get post's title.
+     *
      * @return post's title.
      */
     public String getTitle() {
@@ -109,30 +134,34 @@ public abstract class RedditPost {
 
     /**
      * Is this post in quarantine?
+     *
      * @return if the post is in quarantine.
      */
     public boolean isQuarantine() {
         return quarantine;
     }
-    
+
     /**
      * Set quarantine state for the post.
+     *
      * @param state the state to apply.
      */
     public void setQuarantineState(boolean state) {
         this.quarantine = state;
-    } 
+    }
 
     /**
      * Get post's score.
+     *
      * @return last known post's score.
      */
     public double getScore() {
         return score;
     }
-    
+
     /**
      * Update post's score.
+     *
      * @param newScore the new score.
      */
     public void updateScore(double newScore) {
@@ -141,6 +170,7 @@ public abstract class RedditPost {
 
     /**
      * Get post's hint.
+     *
      * @return post's hint.
      */
     public String getPostHint() {
@@ -149,6 +179,7 @@ public abstract class RedditPost {
 
     /**
      * Is this post crosspostable?
+     *
      * @return if the post is crosspostable.
      */
     public boolean isCrosspostable() {
@@ -157,6 +188,7 @@ public abstract class RedditPost {
 
     /**
      * Is this post NSFW?
+     *
      * @return if the post is Not Safe For Work.
      */
     public boolean isOver18() {
@@ -165,14 +197,16 @@ public abstract class RedditPost {
 
     /**
      * Get post's author.
+     *
      * @return post's author.
      */
     public String getAuthor() {
         return author;
     }
-    
+
     /**
      * Get post's permalink.
+     *
      * @return the post's permalink.
      */
     public String getPermalink() {
@@ -181,6 +215,7 @@ public abstract class RedditPost {
 
     /**
      * Is this post a spoiler?
+     *
      * @return if the post is a spoiler.
      */
     public boolean isSpoiler() {
@@ -189,33 +224,37 @@ public abstract class RedditPost {
 
     /**
      * Get post's id.
+     *
      * @return post's id.
      */
     public String getPostId() {
         return postId;
     }
-    
+
     /**
      * Is this post an image?
+     *
      * @return if the post is an image.
      */
     public abstract boolean isImage();
-    
+
     /**
      * Is this post a text?
+     *
      * @return if the post is a text.
      */
     public abstract boolean isText();
-    
+
     /**
      * Is this post a video?
+     *
      * @return if the post is a video.
      */
     public abstract boolean isVideo();
-    
-    
+
     /**
      * Is this post a link?
+     *
      * @return if the post is a link.
      */
     public abstract boolean isLink();

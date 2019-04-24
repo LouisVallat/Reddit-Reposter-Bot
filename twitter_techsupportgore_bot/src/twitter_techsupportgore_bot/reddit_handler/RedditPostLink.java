@@ -24,8 +24,8 @@ public class RedditPostLink extends RedditPost {
 
     public RedditPostLink(String id, String title, boolean quarantine, 
             double score, String postHint, boolean crosspostable, 
-            boolean over18, String author, String permalink, boolean spoiler) {
-        super(id, title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler);
+            boolean over18, String author, String permalink, boolean spoiler, String url) {
+        super(id, title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler, url);
     }
 
     @Override
