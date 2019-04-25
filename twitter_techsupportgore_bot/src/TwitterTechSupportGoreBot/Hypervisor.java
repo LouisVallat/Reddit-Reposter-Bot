@@ -174,7 +174,7 @@ public class Hypervisor {
             }
             save();
             System.out.println(
-                    "[*] Hypervisor is waiting for " + this.delay + "seconds.");
+                    "[*] Hypervisor is waiting for " + this.delay + " seconds.");
             Thread.sleep(this.delay * 1000);
         }
     }
