@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package twitter_techsupportgore_bot.reddit_handler;
+package TwitterTechSupportGoreBot.redditHandler;
 
 /**
  * This is an abstract class to define all RedditPosts.
@@ -93,7 +93,9 @@ public abstract class RedditPost {
      * @param spoiler is this post a spoiler?
      * @param url post's media url
      */
-    public RedditPost(String id, String title, boolean quarantine, double score, String postHint, boolean crosspostable, boolean over18, String author, String permalink, boolean spoiler, String url) {
+    public RedditPost(String id, String title, boolean quarantine, double score,
+            String postHint, boolean crosspostable, boolean over18,
+            String author, String permalink, boolean spoiler, String url) {
         this.postId = id;
         this.title = title;
         this.quarantine = quarantine;
@@ -109,6 +111,7 @@ public abstract class RedditPost {
 
     /**
      * Get post's URL.
+     *
      * @return the post's media URL.
      */
     public String getUrl() {
@@ -117,12 +120,13 @@ public abstract class RedditPost {
 
     /**
      * Check if the Media URL is correct.
+     *
      * @return if the URL is correct.
      */
     public boolean hasMediaUrl() {
         return url.contains(".jpg") || url.contains(".png");
     }
-    
+
     /**
      * Get post's title.
      *

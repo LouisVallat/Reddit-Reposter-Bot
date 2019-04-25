@@ -14,14 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package twitter_techsupportgore_bot.reddit_handler;
+package TwitterTechSupportGoreBot.redditHandler;
+
+import TwitterTechSupportGoreBot.ConfigFileReader;
+import TwitterTechSupportGoreBot.exceptions.NoSuchFile;
+import TwitterTechSupportGoreBot.exceptions.NoSuchOrder;
+import TwitterTechSupportGoreBot.exceptions.NoSuchProperty;
+import TwitterTechSupportGoreBot.exceptions.NotSufficientRights;
+import java.util.Arrays;
 
 /**
  * A subreddit.
  *
  * @author louis
  */
-public class SubReddit {
+public final class SubReddit {
 
     /**
      * Subreddit's name.
@@ -41,38 +48,71 @@ public class SubReddit {
     /**
      * Dist limit for the JSON api call.
      */
-    private int limit = 25;
-    
+    private int limit;
+
     /**
-     * Order for the JSON.
+     * Order for the JSON (by default, new).
      */
-    private String order = "new";
-    
+    private String order;
+
     /**
      * Main constructor.
      *
      * @param name subreddit's name
+     *
+     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchProperty
+     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchFile
+     * @throws TwitterTechSupportGoreBot.exceptions.NotSufficientRights
+     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchOrder
      */
-    public SubReddit(String name) {
+    public SubReddit(String name) throws NoSuchProperty, NoSuchFile,
+            NotSufficientRights, NoSuchOrder {
         this.name = name;
+        ConfigFileReader reader = new ConfigFileReader();
+        setLimit(Integer.valueOf(reader.getProperties("reddit_posts_limit")));
+        setOrder(reader.getProperties("reddit_posts_sorting_order"));
         this.url = "https://www.reddit.com/r/" + name + "/";
-        this.jsonURL = this.url.substring(0, this.url.length()) + order + ".json";
+        this.jsonURL
+                = this.url.substring(0, this.url.length()) + order + ".json";
     }
 
     /**
      * Set subreddit dist limit for parsing JSON file.
+     *
      * @param limit the limit between 1 and 100.
      */
     public void setLimit(int limit) {
         if (limit < 1 || limit > 100) {
-            throw new IllegalArgumentException("Limit should be between 1 and 100");
+            throw new IllegalArgumentException(
+                    "Limit should be between 1 and 100, and it was"
+                    + limit + ".");
         } else {
             this.limit = limit;
         }
     }
-    
+
+    /**
+     * Set order for the subreddit.
+     *
+     * @param order an order to set
+     *
+     * @throws NoSuchOrder
+     */
+    public void setOrder(String order) throws NoSuchOrder {
+        String[] availableOrders
+                = {"new", "hot", "best", "controversial", "top", "rising"};
+        if (!Arrays.asList(availableOrders).contains(order)) {
+            throw new NoSuchOrder("This order " + order
+                    + "isn't allowed. Orders allowed are: "
+                    + Arrays.toString(availableOrders));
+        } else {
+            this.order = order;
+        }
+    }
+
     /**
      * Get subreddit dist limit.
+     *
      * @return the limit.
      */
     public int getLimit() {

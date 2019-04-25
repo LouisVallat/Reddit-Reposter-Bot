@@ -14,23 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package twitter_techsupportgore_bot.reddit_handler;
+package TwitterTechSupportGoreBot.redditHandler;
 
 /**
+ * Reddit image post object representation.
  *
  * @author louis
  */
-public class RedditPostLink extends RedditPost {
+public class RedditPostImage extends RedditPost {
 
-    public RedditPostLink(String id, String title, boolean quarantine, 
-            double score, String postHint, boolean crosspostable, 
+    public RedditPostImage(String id, String title, boolean quarantine,
+            double score, String postHint, boolean crosspostable,
             boolean over18, String author, String permalink, boolean spoiler, String url) {
         super(id, title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler, url);
     }
 
     @Override
     public boolean isImage() {
-        return false;
+        return true;
     }
 
     @Override
@@ -45,7 +46,6 @@ public class RedditPostLink extends RedditPost {
 
     @Override
     public boolean isLink() {
-        return true;
+        return false;
     }
-    
 }
