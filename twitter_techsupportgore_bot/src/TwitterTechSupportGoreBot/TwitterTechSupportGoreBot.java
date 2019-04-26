@@ -32,6 +32,11 @@ import java.sql.SQLException;
 public class TwitterTechSupportGoreBot {
 
     /**
+     * Version of the application.
+     */
+    private static final String VERSION = "0.9.1";
+    
+    /**
      * Launch the Hypervisor.
      *
      * @param args command line arguments
@@ -55,6 +60,7 @@ public class TwitterTechSupportGoreBot {
             NoSuchProperty,
             NoSuchOrder {
 
+        System.out.println("[*] App version " + VERSION);
         Hypervisor master = Hypervisor.getSingleton();
         master.addSocialMedia(new TwitterBot());
         master.run();
