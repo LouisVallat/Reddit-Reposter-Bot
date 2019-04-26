@@ -145,67 +145,73 @@ public final class RedditExtractor {
             JsonArray children = new JsonParser().parse(data.get("children")
                     .toString()).getAsJsonArray();
             for (int i = 0; i < children.size(); i++) {
-                JsonObject child = new JsonParser().parse(children.get(i)
-                        .toString()).getAsJsonObject();
-                JsonObject childData = new JsonParser().parse(child.get("data")
-                        .toString()).getAsJsonObject();
-                if (childData.get("id").toString() != null
-                        && !childData.get("quarantine").getAsBoolean()
-                        && childData.get("url").getAsString() != null) {
-                    String id = childData.get("id").toString();
-                    String title = childData.get("title") != null
-                            ? childData.get("title").toString()
-                            : this.sub.getName();
-                    title = title.replace("\"", "").replace("\\", "\"");
-                    String author = childData.get("author") != null
-                            ? childData.get("author").toString() : "anonymous";
-                    author = author.replace("\"", "");
-                    boolean quarantine = childData.get("quarantine")
-                            .getAsBoolean();
-                    double score = childData.get("score").getAsDouble();
-                    String postHint = childData.get("post_hint").getAsString();
-                    boolean crosspostable = !childData.get("is_crosspostable")
-                            .getAsBoolean();
-                    boolean over18 = childData.get("over_18").getAsBoolean();
-                    String url;
-                    try {
-                        JsonObject preview = new JsonParser().parse(childData
-                                .get("preview").toString()).getAsJsonObject();
-                        JsonArray previewImages = new JsonParser().parse(preview
-                                .get("images").toString()).getAsJsonArray();
-                        JsonObject source = new JsonParser().parse(previewImages
-                                .get(0).toString()).getAsJsonObject();
-                        JsonObject urlSrc = new JsonParser().parse(source
-                                .get("source").toString()).getAsJsonObject();
-                        url = urlSrc.get("url").toString().replace("amp;", "")
-                                .replace("\"", "");
-                    } catch (NullPointerException n) {
-                        url = childData.get("url").getAsString();
-                    }
-                    String permalink = childData.get("permalink").getAsString();
-                    boolean spoiler = childData.get("spoiler").getAsBoolean();
+                try {
+                    JsonObject child = new JsonParser().parse(children.get(i)
+                            .toString()).getAsJsonObject();
+                    JsonObject childData = new JsonParser().parse(child.get("data")
+                            .toString()).getAsJsonObject();
+                    if (childData.get("id").toString() != null
+                            && !childData.get("quarantine").getAsBoolean()
+                            && childData.get("url").getAsString() != null) {
+                        String id = childData.get("id").toString();
+                        String title = childData.get("title") != null
+                                ? childData.get("title").toString()
+                                : this.sub.getName();
+                        title = title.replace("\"", "").replace("\\", "\"");
+                        String author = childData.get("author") != null
+                                ? childData.get("author").toString() : "anonymous";
+                        author = author.replace("\"", "");
+                        boolean quarantine = childData.get("quarantine")
+                                .getAsBoolean();
+                        double score = childData.get("score").getAsDouble();
+                        String postHint = childData.get("post_hint").getAsString();
+                        boolean crosspostable = !childData.get("is_crosspostable")
+                                .getAsBoolean();
+                        boolean over18 = childData.get("over_18").getAsBoolean();
+                        String url;
+                        try {
+                            JsonObject preview = new JsonParser().parse(childData
+                                    .get("preview").toString()).getAsJsonObject();
+                            JsonArray previewImages = new JsonParser().parse(preview
+                                    .get("images").toString()).getAsJsonArray();
+                            JsonObject source = new JsonParser().parse(previewImages
+                                    .get(0).toString()).getAsJsonObject();
+                            JsonObject urlSrc = new JsonParser().parse(source
+                                    .get("source").toString()).getAsJsonObject();
+                            url = urlSrc.get("url").toString().replace("amp;", "")
+                                    .replace("\"", "");
+                        } catch (NullPointerException n) {
+                            url = childData.get("url").getAsString();
+                        }
+                        String permalink = childData.get("permalink").getAsString();
+                        boolean spoiler = childData.get("spoiler").getAsBoolean();
 
-                    if (postHint.contains("video")) {
-                        set.add(new RedditPostVideo(
-                                id, title, quarantine, score, postHint,
-                                crosspostable, over18, author,
-                                permalink, spoiler, url));
-                    } else if ("link".equals(postHint)) {
-                        set.add(new RedditPostLink(
-                                id, title, quarantine, score, postHint,
-                                crosspostable, over18, author,
-                                permalink, spoiler, url));
-                    } else if ("text".equals(postHint)) {
-                        set.add(new RedditPostText(
-                                id, title, quarantine, score, postHint,
-                                crosspostable, over18, author,
-                                permalink, spoiler, url));
-                    } else if ("image".equals(postHint)) {
-                        set.add(new RedditPostImage(
-                                id, title, quarantine, score, postHint,
-                                crosspostable, over18, author,
-                                permalink, spoiler, url));
+                        if (postHint.contains("video")) {
+                            set.add(new RedditPostVideo(
+                                    id, title, quarantine, score, postHint,
+                                    crosspostable, over18, author,
+                                    permalink, spoiler, url));
+                        } else if ("link".equals(postHint)) {
+                            set.add(new RedditPostLink(
+                                    id, title, quarantine, score, postHint,
+                                    crosspostable, over18, author,
+                                    permalink, spoiler, url));
+                        } else if ("text".equals(postHint)) {
+                            set.add(new RedditPostText(
+                                    id, title, quarantine, score, postHint,
+                                    crosspostable, over18, author,
+                                    permalink, spoiler, url));
+                        } else if ("image".equals(postHint)) {
+                            set.add(new RedditPostImage(
+                                    id, title, quarantine, score, postHint,
+                                    crosspostable, over18, author,
+                                    permalink, spoiler, url));
+                        }
                     }
+                } catch (NullPointerException e) {
+                    System.out.println(
+                            "[*] There were a problem while parsing. "
+                            + "Continuing");
                 }
             }
             return set;

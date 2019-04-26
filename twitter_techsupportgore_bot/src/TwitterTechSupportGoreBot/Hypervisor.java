@@ -60,17 +60,7 @@ public class Hypervisor {
      * SQLITE table name.
      */
     private final String tableName;
-
-    /**
-     * All the reddit posts parsed.
-     */
-    private final HashMap<String, RedditPost> redditPosts;
-
-    /**
-     * All the already shared posts, so there are no boule shares.
-     */
-    private final HashMap<String, RedditPost> alreadySharedPosts;
-
+    
     /**
      * Delay between two scans, in seconds.
      */
@@ -120,13 +110,11 @@ public class Hypervisor {
         this.delay = Integer.valueOf(reader.getProperties("delay"));
         this.sqliteDatabase = reader.getProperties("sqlite_db_name");
         this.socialMedias = new ArrayList<>();
-        this.redditPosts = new HashMap<>();
         this.workingDirectory = reader.getProperties("working_directory");
         setupTheBotDirectory();
         this.connexion = DriverManager.getConnection("jdbc:sqlite:"
                 + this.workingDirectory + File.separator + this.sqliteDatabase);
         this.myRedditExtractor = new RedditExtractor(subreddit);
-        this.alreadySharedPosts = new HashMap<>();
         if ("Y".equals(reader.getProperties("clear_database"))) {
             clearDatabase();
         }
@@ -172,7 +160,6 @@ public class Hypervisor {
             for (RedditPost post : myRedditExtractor.getRedditPosts()) {
                 computeRedditPost(post);
             }
-            save();
             System.out.println(
                     "[*] Hypervisor is waiting for " + this.delay + " seconds.");
             Thread.sleep(this.delay * 1000);
@@ -186,69 +173,13 @@ public class Hypervisor {
      * @throws SQLException
      */
     private void load() throws ClassNotFoundException, SQLException {
-        System.out.println("[*] Loading the Reddit posts from database.");
         createTable();
         PreparedStatement recherche = this.connexion.prepareStatement(
-                "SELECT * FROM " + this.tableName + ";");
+                "SELECT COUNT(id) AS cpt FROM " + this.tableName + ";");
         try (ResultSet res = recherche.executeQuery()) {
-            while (res.next()) {
-                RedditPost post
-                        = "image".equals(res.getString("postType"))
-                        ? new RedditPostImage(res.getString("postId"),
-                                res.getString("title"),
-                                res.getBoolean("quarantine"),
-                                res.getDouble("score"),
-                                res.getString("postHint"),
-                                res.getBoolean("crosspostable"),
-                                res.getBoolean("over18"),
-                                res.getString("author"),
-                                res.getString("permalink"),
-                                res.getBoolean("spoiler"),
-                                res.getString("url"))
-                        : "link".equals(res.getString("postType"))
-                        ? new RedditPostLink(res.getString("postId"),
-                                res.getString("title"),
-                                res.getBoolean("quarantine"),
-                                res.getDouble("score"),
-                                res.getString("postHint"),
-                                res.getBoolean("crosspostable"),
-                                res.getBoolean("over18"),
-                                res.getString("author"),
-                                res.getString("permalink"),
-                                res.getBoolean("spoiler"),
-                                res.getString("url"))
-                        : "video".equals(res.getString("postType"))
-                        ? new RedditPostVideo(res.getString("postId"),
-                                res.getString("title"),
-                                res.getBoolean("quarantine"),
-                                res.getDouble("score"),
-                                res.getString("postHint"),
-                                res.getBoolean("crosspostable"),
-                                res.getBoolean("over18"),
-                                res.getString("author"),
-                                res.getString("permalink"),
-                                res.getBoolean("spoiler"),
-                                res.getString("url"))
-                        : new RedditPostText(res.getString("postId"),
-                                res.getString("title"),
-                                res.getBoolean("quarantine"),
-                                res.getDouble("score"),
-                                res.getString("postHint"),
-                                res.getBoolean("crosspostable"),
-                                res.getBoolean("over18"),
-                                res.getString("author"),
-                                res.getString("permalink"),
-                                res.getBoolean("spoiler"),
-                                res.getString("url"));
-                this.redditPosts.put(post.getPostId(), post);
-                if (res.getBoolean("shared")) {
-                    this.alreadySharedPosts.put(post.getPostId(), post);
-                }
-            }
+            res.next();
+            System.out.println("[*] " + res.getInt("cpt") + " posts in database.");
         }
-        System.out.println("[*] Loading done. "
-                + this.redditPosts.size() + " posts loaded. "
-                + this.alreadySharedPosts.size() + " posts already shared.");
     }
 
     /**
@@ -268,16 +199,17 @@ public class Hypervisor {
     }
 
     /**
-     * Save all the reddit posts to the database.
+     * Add a given reddit post to the database.
+     * 
+     * @param current a given reddit post to add to the database
      *
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    private void save() throws ClassNotFoundException, SQLException {
+    private void addRedditPostToDatabase(RedditPost current)
+            throws ClassNotFoundException, SQLException {
         createTable();
-        for (String postId : this.redditPosts.keySet()) {
-            RedditPost current = this.redditPosts.get(postId);
-            if (!isInDatabase(postId)) {
+            if (!isInDatabase(current.getPostId())) {
                 PreparedStatement ajout = this.connexion.prepareStatement(
                         "INSERT INTO " + this.tableName
                         + "("
@@ -314,10 +246,9 @@ public class Hypervisor {
                 ajout.setString(10, current.getPermalink());
                 ajout.setBoolean(11, current.isSpoiler());
                 ajout.setString(12, current.getUrl());
-                ajout.setBoolean(13, this.alreadySharedPosts
-                        .containsKey(current.getPostId()));
+                ajout.setBoolean(13, false);
                 ajout.execute();
-            }
+            
         }
     }
 
@@ -341,6 +272,28 @@ public class Hypervisor {
     }
 
     /**
+     * Check if a post is marked as shared in database.
+     *
+     * @param postId the post id
+     * @return if the post is shared in the database
+     *
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    private boolean isShared(String postId)
+            throws SQLException, ClassNotFoundException {
+        PreparedStatement recherche = this.connexion.prepareStatement(
+                "SELECT shared FROM " + this.tableName + " "
+                + "WHERE postId = '" + postId + "'");
+        try (ResultSet resultats = recherche.executeQuery()) {
+            if (resultats.next()) {
+                return resultats.getBoolean("shared");
+            }
+            return false;
+        }
+    }
+
+    /**
      * Set a post as shared onsocial networks.
      *
      * @param postId the post id
@@ -348,21 +301,17 @@ public class Hypervisor {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    private void setPostAsShared(String postId)
+    private void setPostAsShared(RedditPost r)
             throws SQLException, ClassNotFoundException {
         System.out.println("[+] Post \""
-                + this.redditPosts.get(postId).getTitle()
-                + "\" has been shared successfully.");
-        this.alreadySharedPosts.put(postId, this.redditPosts.get(postId));
-        if (isInDatabase(postId)) {
-            PreparedStatement update = this.connexion.prepareStatement(
-                    "UPDATE " + this.tableName + " "
-                    + "SET shared=? "
-                    + "WHERE postId = '" + postId + "';"
-            );
-            update.setBoolean(1, true);
-            update.execute();
-        }
+                + r.getTitle()
+                + "\" is about to be shared.");
+        PreparedStatement update = this.connexion.prepareStatement(
+                "UPDATE " + this.tableName + " "
+                + "SET shared=? "
+                + "WHERE postId = '" + r.getPostId() + "';");
+        update.setBoolean(1, true);
+        update.execute();
     }
 
     /**
@@ -404,13 +353,13 @@ public class Hypervisor {
      */
     private void computeRedditPost(RedditPost r)
             throws SQLException, ClassNotFoundException {
-        if (!this.alreadySharedPosts.containsKey(r.getPostId())
-                && !r.isQuarantine()) {
+        if (!isShared(r.getPostId()) && !r.isQuarantine()) {
             System.out.println(
                     "[*] Computing the post \"" + r.getTitle() + "\"");
-            this.redditPosts.put(r.getPostId(), r);
+            addRedditPostToDatabase(r);
             if (r.hasMediaUrl()) {
                 String fileName = saveImage(r.getUrl());
+                setPostAsShared(r);
                 socialMedias.forEach((s) -> {
                     long postRef = s.postImage(
                             formatPost(r.getTitle()), fileName);
@@ -422,8 +371,10 @@ public class Hypervisor {
                     }
                 });
                 deleteFile(fileName);
+                System.out.println("[+] Post \""
+                        + r.getTitle()
+                        + "\" has been shared successfully.");
             }
-            setPostAsShared(r.getPostId());
         }
     }
 
