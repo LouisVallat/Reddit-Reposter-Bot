@@ -159,7 +159,10 @@ public class Hypervisor {
         for (;;) {
             for (RedditPost post : myRedditExtractor.getRedditPosts()) {
                 computeRedditPost(post);
+                post = null;
             }
+            System.out.println("[*] Cleaning memory.");
+            System.gc();
             System.out.println(
                     "[*] Hypervisor is waiting for " + this.delay + " seconds.");
             Thread.sleep(this.delay * 1000);
