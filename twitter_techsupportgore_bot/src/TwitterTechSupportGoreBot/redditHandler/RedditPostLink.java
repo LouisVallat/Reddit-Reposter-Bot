@@ -17,16 +17,18 @@
 package TwitterTechSupportGoreBot.redditHandler;
 
 /**
- *  Reddit link post object representation.
- * 
+ * Reddit link post object representation.
+ *
  * @author louis
  */
 public class RedditPostLink extends RedditPost {
 
-    public RedditPostLink(String id, String title, boolean quarantine, 
-            double score, String postHint, boolean crosspostable, 
-            boolean over18, String author, String permalink, boolean spoiler, String url) {
-        super(id, title, quarantine, score, postHint, crosspostable, over18, author, permalink, spoiler, url);
+    public RedditPostLink(String id, String title, boolean quarantine,
+            double score, String postHint, boolean crosspostable,
+            boolean over18, String author, String permalink,
+            boolean spoiler, String url) {
+        super(id, title, quarantine, score, postHint,
+                crosspostable, over18, author, permalink, spoiler, url);
     }
 
     @Override
@@ -48,5 +50,5 @@ public class RedditPostLink extends RedditPost {
     public boolean isLink() {
         return true;
     }
-    
+
 }

@@ -32,7 +32,7 @@ public final class ConfigFileReader {
     /**
      * The config file name.
      */
-    private static final String CONFIGFILE = "settings.conf";
+    private static String CONFIGFILE = "settings.conf";
 
     /**
      * The properties object.
@@ -46,6 +46,19 @@ public final class ConfigFileReader {
      * @throws NotSufficientRights
      */
     public ConfigFileReader() throws NoSuchFile, NotSufficientRights {
+        readConfigFile();
+    }
+
+    /**
+     * Create a new config file reader that automatically reads the config file,
+     * precising the config file name.
+     *
+     * @param conf the cnfig file path name.
+     * @throws NoSuchFile
+     * @throws NotSufficientRights
+     */
+    public ConfigFileReader(String conf) throws NoSuchFile, NotSufficientRights {
+        CONFIGFILE = conf;
         readConfigFile();
     }
 

@@ -16,11 +16,7 @@
  */
 package TwitterTechSupportGoreBot;
 
-import TwitterTechSupportGoreBot.redditHandler.RedditPostImage;
 import TwitterTechSupportGoreBot.redditHandler.RedditPost;
-import TwitterTechSupportGoreBot.redditHandler.RedditPostText;
-import TwitterTechSupportGoreBot.redditHandler.RedditPostLink;
-import TwitterTechSupportGoreBot.redditHandler.RedditPostVideo;
 import TwitterTechSupportGoreBot.socialMediaHandler.*;
 import TwitterTechSupportGoreBot.redditHandler.*;
 import TwitterTechSupportGoreBot.exceptions.*;
@@ -31,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -60,7 +55,7 @@ public class Hypervisor {
      * SQLITE table name.
      */
     private final String tableName;
-    
+
     /**
      * Delay between two scans, in seconds.
      */
@@ -202,7 +197,7 @@ public class Hypervisor {
 
     /**
      * Add a given reddit post to the database.
-     * 
+     *
      * @param current a given reddit post to add to the database
      *
      * @throws ClassNotFoundException
@@ -211,46 +206,46 @@ public class Hypervisor {
     private void addRedditPostToDatabase(RedditPost current)
             throws ClassNotFoundException, SQLException {
         createTable();
-            if (!isInDatabase(current.getPostId())) {
-                PreparedStatement ajout = this.connexion.prepareStatement(
-                        "INSERT INTO " + this.tableName
-                        + "("
-                        + "postType, "
-                        + "postId, "
-                        + "title, "
-                        + "quarantine, "
-                        + "score, "
-                        + "postHint, "
-                        + "crosspostable, "
-                        + "over18, "
-                        + "author, "
-                        + "permalink, "
-                        + "spoiler, "
-                        + "url, "
-                        + "shared"
-                        + ") "
-                        + "VALUES "
-                        + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-                );
-                ajout.setString(1,
-                        current.isImage() ? "image"
-                        : current.isLink() ? "link"
-                        : current.isText() ? "text"
-                        : "video");
-                ajout.setString(2, current.getPostId());
-                ajout.setString(3, current.getTitle());
-                ajout.setBoolean(4, current.isQuarantine());
-                ajout.setDouble(5, current.getScore());
-                ajout.setString(6, current.getPostHint());
-                ajout.setBoolean(7, current.isCrosspostable());
-                ajout.setBoolean(8, current.isOver18());
-                ajout.setString(9, current.getAuthor());
-                ajout.setString(10, current.getPermalink());
-                ajout.setBoolean(11, current.isSpoiler());
-                ajout.setString(12, current.getUrl());
-                ajout.setBoolean(13, false);
-                ajout.execute();
-            
+        if (!isInDatabase(current.getPostId())) {
+            PreparedStatement ajout = this.connexion.prepareStatement(
+                    "INSERT INTO " + this.tableName
+                    + "("
+                    + "postType, "
+                    + "postId, "
+                    + "title, "
+                    + "quarantine, "
+                    + "score, "
+                    + "postHint, "
+                    + "crosspostable, "
+                    + "over18, "
+                    + "author, "
+                    + "permalink, "
+                    + "spoiler, "
+                    + "url, "
+                    + "shared"
+                    + ") "
+                    + "VALUES "
+                    + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+            );
+            ajout.setString(1,
+                    current.isImage() ? "image"
+                    : current.isLink() ? "link"
+                    : current.isText() ? "text"
+                    : "video");
+            ajout.setString(2, current.getPostId());
+            ajout.setString(3, current.getTitle());
+            ajout.setBoolean(4, current.isQuarantine());
+            ajout.setDouble(5, current.getScore());
+            ajout.setString(6, current.getPostHint());
+            ajout.setBoolean(7, current.isCrosspostable());
+            ajout.setBoolean(8, current.isOver18());
+            ajout.setString(9, current.getAuthor());
+            ajout.setString(10, current.getPermalink());
+            ajout.setBoolean(11, current.isSpoiler());
+            ajout.setString(12, current.getUrl());
+            ajout.setBoolean(13, true);
+            ajout.execute();
+
         }
     }
 
@@ -271,49 +266,6 @@ public class Hypervisor {
         try (ResultSet resultats = recherche.executeQuery()) {
             return resultats.next();
         }
-    }
-
-    /**
-     * Check if a post is marked as shared in database.
-     *
-     * @param postId the post id
-     * @return if the post is shared in the database
-     *
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     */
-    private boolean isShared(String postId)
-            throws SQLException, ClassNotFoundException {
-        PreparedStatement recherche = this.connexion.prepareStatement(
-                "SELECT shared FROM " + this.tableName + " "
-                + "WHERE postId = '" + postId + "'");
-        try (ResultSet resultats = recherche.executeQuery()) {
-            if (resultats.next()) {
-                return resultats.getBoolean("shared");
-            }
-            return false;
-        }
-    }
-
-    /**
-     * Set a post as shared onsocial networks.
-     *
-     * @param postId the post id
-     *
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     */
-    private void setPostAsShared(RedditPost r)
-            throws SQLException, ClassNotFoundException {
-        System.out.println("[+] Post \""
-                + r.getTitle()
-                + "\" is about to be shared.");
-        PreparedStatement update = this.connexion.prepareStatement(
-                "UPDATE " + this.tableName + " "
-                + "SET shared=? "
-                + "WHERE postId = '" + r.getPostId() + "';");
-        update.setBoolean(1, true);
-        update.execute();
     }
 
     /**
@@ -355,28 +307,25 @@ public class Hypervisor {
      */
     private void computeRedditPost(RedditPost r)
             throws SQLException, ClassNotFoundException {
-        if (!isShared(r.getPostId()) && !r.isQuarantine()) {
+        if (!isInDatabase(r.getPostId()) && !r.isQuarantine() && r.hasMediaUrl()) {
             System.out.println(
                     "[*] Computing the post \"" + r.getTitle() + "\"");
             addRedditPostToDatabase(r);
-            if (r.hasMediaUrl()) {
-                String fileName = saveImage(r.getUrl());
-                setPostAsShared(r);
-                socialMedias.forEach((s) -> {
-                    long postRef = s.postImage(
-                            formatPost(r.getTitle()), fileName);
-                    if (postRef != 0 && postRef != -1) {
-                        s.replyText(formatPost("from /u/" + r.getAuthor() + " "
-                                + "on /r/" + this.subreddit + " "
-                                + "at link : https://www.reddit.com"
-                                + r.getPermalink()), postRef);
-                    }
-                });
-                deleteFile(fileName);
-                System.out.println("[+] Post \""
-                        + r.getTitle()
-                        + "\" has been shared successfully.");
-            }
+            String fileName = saveImage(r.getUrl());
+            socialMedias.forEach((s) -> {
+                long postRef = s.postImage(
+                        formatPost(r.getTitle()), fileName);
+                if (postRef != 0 && postRef != -1) {
+                    s.replyText(formatPost("from /u/" + r.getAuthor() + " "
+                            + "on /r/" + this.subreddit + " "
+                            + "at link : https://www.reddit.com"
+                            + r.getPermalink()), postRef);
+                }
+            });
+            deleteFile(fileName);
+            System.out.println("[+] Post \""
+                    + r.getTitle()
+                    + "\" has been shared successfully.");
         }
     }
 
