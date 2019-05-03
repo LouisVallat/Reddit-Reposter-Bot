@@ -32,6 +32,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 
 /**
  * Singleton Hypervisor. This is the object that does everything. So we want it
@@ -84,7 +85,7 @@ public class Hypervisor {
     /**
      * Connection to the SQLITE database.
      */
-    private final Connection connexion;
+    private Connection connexion;
 
     /**
      * RedditExtractor.
@@ -108,13 +109,15 @@ public class Hypervisor {
         this.workingDirectory = reader.getProperties("working_directory");
         setupTheBotDirectory();
         this.connexion = DriverManager.getConnection("jdbc:sqlite:"
-                + this.workingDirectory + File.separator + this.sqliteDatabase);
+                    + this.workingDirectory + File.separator
+                    + this.sqliteDatabase);
         this.myRedditExtractor = new RedditExtractor(subreddit);
         if ("Y".equals(reader.getProperties("clear_database"))) {
             clearDatabase();
         }
         this.maxLength = Integer.valueOf(reader.getProperties("max_text_length"));
         load();
+        this.connexion.close();
         System.out.println("[+] Hypervisor created successfully.");
     }
 
@@ -152,13 +155,16 @@ public class Hypervisor {
             InterruptedException {
         System.out.println("[+] Hypervisor is now running.");
         for (;;) {
+            this.connexion = DriverManager.getConnection("jdbc:sqlite:"
+                    + this.workingDirectory + File.separator
+                    + this.sqliteDatabase);
             for (RedditPost post : myRedditExtractor.getRedditPosts()) {
                 computeRedditPost(post);
             }
-            System.out.println("[*] Cleaning memory.");
-            System.gc();
+            this.connexion.close();
             System.out.println(
-                    "[*] Hypervisor is waiting for " + this.delay + " seconds.");
+                    "[*] Hypervisor is waiting for "
+                    + this.delay + " seconds.");
             Thread.sleep(this.delay * 1000);
         }
     }
