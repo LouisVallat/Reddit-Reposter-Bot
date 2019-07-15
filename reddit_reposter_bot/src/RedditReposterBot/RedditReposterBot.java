@@ -29,7 +29,7 @@ import java.sql.SQLException;
  *
  * @author louis
  */
-public class TwitterTechSupportGoreBot {
+public class RedditReposterBot {
 
     /**
      * Version of the application.
