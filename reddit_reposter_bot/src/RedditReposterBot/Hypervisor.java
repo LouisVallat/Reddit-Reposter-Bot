@@ -129,12 +129,12 @@ public class Hypervisor {
      * @return the instance.
      *
      * @throws java.lang.ClassNotFoundException
-     * @throws TwitterTechSupportGoreBot.exceptions.NotSufficientRights
+     * @throws RedditReposterBot.exceptions.NotSufficientRights
      * @throws java.sql.SQLException
      * @throws java.io.IOException
-     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchFile
-     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchProperty
-     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchOrder
+     * @throws RedditReposterBot.exceptions.NoSuchFile
+     * @throws RedditReposterBot.exceptions.NoSuchProperty
+     * @throws RedditReposterBot.exceptions.NoSuchOrder
      */
     public static Hypervisor getSingleton()
             throws ClassNotFoundException, NotSufficientRights,
@@ -399,8 +399,7 @@ public class Hypervisor {
      * Set working directory.
      *
      * @param tempDir the path to the working directory.
-     *
-     * @throws TwitterTechSupportGoreBot.exceptions.NotSufficientRights
+     * @throws RedditReposterBot.exceptions.NotSufficientRights
      */
     public void setWorkDir(String tempDir) throws NotSufficientRights {
         this.workingDirectory = tempDir;

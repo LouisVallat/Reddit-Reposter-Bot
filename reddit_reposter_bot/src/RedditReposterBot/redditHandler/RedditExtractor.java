@@ -157,9 +157,17 @@ public final class RedditExtractor {
                         String title = childData.get("title") != null
                                 ? childData.get("title").toString()
                                 : this.sub.getName();
-                        title = title.replace("\"", "").replace("\\", "\"");
+                        title = title
+                                .replace("\"", "")
+                                .replace("\\", "\"")
+                                .replace("&lt;", "<")
+                                .replace("&gt;", ">")
+                                .replace("&amp;", "&");
                         String author = childData.get("author") != null
-                                ? childData.get("author").toString() : "anonymous";
+                                ? childData.get("author").toString()
+                                        .replace("&lt;", "<")
+                                        .replace("&gt;", ">")
+                                        .replace("&amp;", "&") : "anonymous";
                         author = author.replace("\"", "");
                         boolean quarantine = childData.get("quarantine")
                                 .getAsBoolean();
@@ -178,7 +186,7 @@ public final class RedditExtractor {
                                     .get(0).toString()).getAsJsonObject();
                             JsonObject urlSrc = new JsonParser().parse(source
                                     .get("source").toString()).getAsJsonObject();
-                            url = urlSrc.get("url").toString().replace("amp;", "")
+                            url = urlSrc.get("url").toString().replace("&amp;", "&")
                                     .replace("\"", "");
                         } catch (NullPointerException n) {
                             url = childData.get("url").getAsString();

@@ -34,7 +34,7 @@ public class RedditReposterBot {
     /**
      * Version of the application.
      */
-    private static final String VERSION = "0.9.1";
+    private static final String VERSION = "1.0.1";
     
     /**
      * Launch the Hypervisor.

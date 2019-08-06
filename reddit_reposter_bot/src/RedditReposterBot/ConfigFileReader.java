@@ -67,8 +67,8 @@ public final class ConfigFileReader {
     /**
      * Read the config file.
      *
-     * @throws TwitterTechSupportGoreBot.exceptions.NotSufficientRights
-     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchFile
+     * @throws RedditReposterBot.exceptions.NoSuchFile
+     * @throws RedditReposterBot.exceptions.NotSufficientRights
      */
     public void readConfigFile() throws NoSuchFile, NotSufficientRights {
         if (!new File(CONFIGFILE).exists()) {
@@ -93,8 +93,7 @@ public final class ConfigFileReader {
      *
      * @param id the property id.
      * @return the properties.
-     *
-     * @throws TwitterTechSupportGoreBot.exceptions.NoSuchProperty
+     * @throws RedditReposterBot.exceptions.NoSuchProperty
      */
     public String getProperties(String id) throws NoSuchProperty {
         if (!this.prop.containsKey(id)) {
